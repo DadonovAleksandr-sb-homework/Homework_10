@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using Telegram.Bot;
 using Telegram.Bot.Args;
@@ -12,6 +14,9 @@ namespace Homework_10
 {
     public class MyTelegramBot
     {
+        private MainWindow window;
+        public ObservableCollection<MessageLog> BotMessageLog { get; set; }
+
         private TelegramBotClient _client;
         private string _name;
         private List<BotFile> _files;
@@ -27,8 +32,10 @@ namespace Homework_10
         /// <param name="token"></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception"></exception>
-        public MyTelegramBot(string token)
+        public MyTelegramBot(MainWindow w, string token)
         {
+            BotMessageLog = new ObservableCollection<MessageLog>();
+            window = w;
             if (string.IsNullOrEmpty(token))                        // если вместо токена передали пустую строку, 
                 throw new ArgumentNullException(nameof(token));     // генерируем исключение
 
@@ -56,7 +63,7 @@ namespace Homework_10
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.WriteLine(e);
                 throw;
             }
         }
@@ -73,34 +80,36 @@ namespace Homework_10
             switch (e.Message.Type)
             {
                 case MessageType.Text:
-                    Console.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send text:{e.Message.Text}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send text:{e.Message.Text}");
                     TextHandler(e.Message);
                     break;
                 case MessageType.Document:
-                    Console.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send doc: {e.Message.Document.FileName} {e.Message.Document.FileSize}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send doc: {e.Message.Document.FileName} {e.Message.Document.FileSize}");
                     DocumentHandler(e.Message.Document.FileId, e.Message.Document.FileName);
                     break;
                 case MessageType.Audio:
-                    Console.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send audio: {e.Message.Audio.FileName} {e.Message.Audio.FileSize}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send audio: {e.Message.Audio.FileName} {e.Message.Audio.FileSize}");
                     DocumentHandler(e.Message.Audio.FileId, e.Message.Audio.FileName);
                     break;
                 case MessageType.Photo:
-                    Console.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send photo: {e.Message.Photo[e.Message.Photo.Length - 1].FileId} {e.Message.Photo[e.Message.Photo.Length - 1].FileSize}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send photo: {e.Message.Photo[e.Message.Photo.Length - 1].FileId} {e.Message.Photo[e.Message.Photo.Length - 1].FileSize}");
                     DocumentHandler(e.Message.Photo[e.Message.Photo.Length - 1].FileId, e.Message.Photo[e.Message.Photo.Length - 1].FileId);
                     break;
                 case MessageType.Video:
-                    Console.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send video: {e.Message.Video.FileName} {e.Message.Video.FileSize}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send video: {e.Message.Video.FileName} {e.Message.Video.FileSize}");
                     DocumentHandler(e.Message.Video.FileId, (string.IsNullOrEmpty(e.Message.Video.FileName) ? e.Message.Video.FileId : e.Message.Video.FileName));
                     break;
                 case MessageType.Voice:
-                    Console.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send video: {e.Message.Video.FileName} {e.Message.Video.FileSize}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send video: {e.Message.Video.FileName} {e.Message.Video.FileSize}");
                     DocumentHandler(e.Message.Voice.FileId, e.Message.Voice.FileId);
                     break;
                 default:
-                    Console.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send {e.Message.Type}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send {e.Message.Type}");
                     await _client.SendTextMessageAsync(e.Message.Chat.Id, "Прости, я не понимаю такие сообщения.");
                     break;
             }
+
+            
         }
 
         /// <summary>
@@ -110,7 +119,7 @@ namespace Homework_10
         /// <param name="e"></param>
         private async void CallbackQuery(object sender, CallbackQueryEventArgs e)
         {
-            Console.WriteLine($"{DateTime.Now} \t\t {e.CallbackQuery.From.FirstName} {e.CallbackQuery.From.LastName} \t\t touch button:{e.CallbackQuery.Data}");
+            Debug.WriteLine($"{DateTime.Now} \t\t {e.CallbackQuery.From.FirstName} {e.CallbackQuery.From.LastName} \t\t touch button:{e.CallbackQuery.Data}");
             MenuHandler(e.CallbackQuery);
 
         }
@@ -121,6 +130,12 @@ namespace Homework_10
         /// <param name="msg"></param>
         public async void TextHandler(Message msg)
         {
+            window.Dispatcher.Invoke(() =>
+            {
+                BotMessageLog.Add(new MessageLog(
+                    DateTime.Now.ToLongTimeString(), msg.Text, msg.Chat.FirstName, msg.Chat.Id));
+            });
+
             switch (msg.Text.ToLower())
             {
                 case "/start":
@@ -226,7 +241,7 @@ namespace Homework_10
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error downloading: " + ex.Message);
+                Debug.WriteLine("Error downloading: " + ex.Message);
             }
         }
 
@@ -260,20 +275,11 @@ namespace Homework_10
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.WriteLine(e);
             }
 
             return ls;
         }
-
-
-
-
-
-
-
-
-
 
         private string CheckDirectory(string path)
         {
@@ -282,9 +288,6 @@ namespace Homework_10
 
             return $"{RootPath}/{path}";
         }
-
-
-
 
     }
 }

@@ -24,9 +24,11 @@ namespace Homework_10
                 var tokenFilePath = "token.txt";
                 if (File.Exists(tokenFilePath))
                 {
-                    var bot = new MyTelegramBot(File.ReadAllText(tokenFilePath));         // своя обертка для телеграм-клиента
+                    var bot = new MyTelegramBot(this, File.ReadAllText(tokenFilePath));         // своя обертка для телеграм-клиента
                     if (bot.Start())
                         Debug.WriteLine($"Запуск бота {bot.Name}");
+
+                    LogList.ItemsSource = bot.BotMessageLog;
                 }
                 else
                 {
