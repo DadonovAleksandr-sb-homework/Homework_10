@@ -12,7 +12,7 @@ namespace Homework_10
 
         public string Name { get; set; }
 
-        public MessageLog(string Time, string Msg, string FirstName, long Id)
+        public MessageLog(string Msg, string FirstName, long Id)
         {
             this.Time = DateTime.Now.ToLongTimeString();
             this.Msg = Msg;
