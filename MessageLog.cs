@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Homework_10
 {
@@ -18,7 +14,7 @@ namespace Homework_10
 
         public MessageLog(string Time, string Msg, string FirstName, long Id)
         {
-            this.Time = Time;
+            this.Time = DateTime.Now.ToLongTimeString();
             this.Msg = Msg;
             this.Name = FirstName;
             this.Id = Id;

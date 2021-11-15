@@ -133,7 +133,7 @@ namespace Homework_10
             window.Dispatcher.Invoke(() =>
             {
                 BotMessageLog.Add(new MessageLog(
-                    DateTime.Now.ToLongTimeString(), msg.Text, msg.Chat.FirstName, msg.Chat.Id));
+                    msg.Text, msg.Chat.FirstName, msg.Chat.Id));
             });
 
             switch (msg.Text.ToLower())

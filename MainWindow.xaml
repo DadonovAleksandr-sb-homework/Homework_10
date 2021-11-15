@@ -12,8 +12,8 @@
             <RowDefinition Height="30*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30*"></ColumnDefinition>
-            <ColumnDefinition Width="70*"></ColumnDefinition>
+            <ColumnDefinition Width="10*"></ColumnDefinition>
+            <ColumnDefinition Width="90*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
     
         <ListBox x:Name="UserList"
