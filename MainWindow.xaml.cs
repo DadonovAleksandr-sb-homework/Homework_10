@@ -11,6 +11,8 @@ namespace Homework_10
     /// </summary>
     public partial class MainWindow : Window
     {
+        MyTelegramBot bot;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -24,11 +26,12 @@ namespace Homework_10
                 var tokenFilePath = "token.txt";
                 if (File.Exists(tokenFilePath))
                 {
-                    var bot = new MyTelegramBot(this, File.ReadAllText(tokenFilePath));         // своя обертка для телеграм-клиента
+                    bot = new MyTelegramBot(this, File.ReadAllText(tokenFilePath));         // своя обертка для телеграм-клиента
                     if (bot.Start())
                         Debug.WriteLine($"Запуск бота {bot.Name}");
 
                     LogList.ItemsSource = bot.BotMessageLog;
+                    UserList.ItemsSource = bot.UserList;
                 }
                 else
                 {
@@ -42,6 +45,12 @@ namespace Homework_10
             }
 
             Console.ReadLine();
+        }
+
+        private void btnMsgSendClick(object sender, RoutedEventArgs e)
+        {
+            if(bot != null)
+                bot.SendMessage(txtMsgSend.Text, TargetSend.Text);
         }
     }
 }

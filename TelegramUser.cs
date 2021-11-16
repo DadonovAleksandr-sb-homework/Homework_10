@@ -14,6 +14,12 @@ namespace Homework_10
         public string Nick { get; set; }
 
         /// <summary>
+        /// Имя пользователя
+        /// </summary>
+        public string Name { get; set; }
+
+
+        /// <summary>
         /// Идентификатор чата
         /// </summary>
         public long ChatId { get; set; }
@@ -23,9 +29,20 @@ namespace Homework_10
         /// </summary>
         public List<string> Messages { get; set; }
 
-        public TelegramUser(string nickName, long chatId)
+        /// <summary>
+        /// Последнее сообщение в чате пользователя
+        /// </summary>
+        public string LastMessage => Messages.LastOrDefault();
+
+        /// <summary>
+        /// Кол-во сообщений в чате
+        /// </summary>
+        public int MessageCount => Messages.Count;
+
+        public TelegramUser(string nick, string name, long chatId)
         {
-            Nick = nickName;
+            Nick = nick;
+            Name = name;
             ChatId = chatId;
             Messages = new List<string>();
         }
@@ -36,6 +53,21 @@ namespace Homework_10
         /// <param name="other"></param>
         /// <returns></returns>
         public bool Equals(TelegramUser other) => other.ChatId == this.ChatId;
+
+        public override bool Equals(object obj)
+        {
+            if (obj is null) return false;
+            if(obj is TelegramUser user)
+            {
+                return Equals(user);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)ChatId;
+        }
 
         /// <summary>
         /// Добавление сообщения

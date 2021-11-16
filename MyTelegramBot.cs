@@ -16,6 +16,7 @@ namespace Homework_10
     {
         private MainWindow window;
         public ObservableCollection<MessageLog> BotMessageLog { get; set; }
+        public ObservableCollection<TelegramUser> UserList { get; set; }
 
         private TelegramBotClient _client;
         private string _name;
@@ -35,6 +36,7 @@ namespace Homework_10
         public MyTelegramBot(MainWindow w, string token)
         {
             BotMessageLog = new ObservableCollection<MessageLog>();
+            UserList = new ObservableCollection<TelegramUser>();
             window = w;
             if (string.IsNullOrEmpty(token))                        // если вместо токена передали пустую строку, 
                 throw new ArgumentNullException(nameof(token));     // генерируем исключение
@@ -46,6 +48,11 @@ namespace Homework_10
                 _name = me.Username;
             else
                 throw new Exception("Не удалось получить информацию о боте!");
+        }
+
+        internal async void SendMessage(string message, string Id)
+        {
+            await _client.SendTextMessageAsync(Id, message);
         }
 
         /// <summary>
@@ -76,35 +83,37 @@ namespace Homework_10
         private async void MessageListener(object sender, MessageEventArgs e)
         {
             if (e.Message is null) return;
+            var userName = $"{e.Message.From.FirstName} {e.Message.From.LastName}";
+            CheckUser(e.Message.From.Username, userName, e.Message.Chat.Id);
 
             switch (e.Message.Type)
             {
                 case MessageType.Text:
-                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send text:{e.Message.Text}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send text:{e.Message.Text}");
                     TextHandler(e.Message);
                     break;
                 case MessageType.Document:
-                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send doc: {e.Message.Document.FileName} {e.Message.Document.FileSize}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send doc: {e.Message.Document.FileName} {e.Message.Document.FileSize}");
                     DocumentHandler(e.Message.Document.FileId, e.Message.Document.FileName);
                     break;
                 case MessageType.Audio:
-                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send audio: {e.Message.Audio.FileName} {e.Message.Audio.FileSize}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send audio: {e.Message.Audio.FileName} {e.Message.Audio.FileSize}");
                     DocumentHandler(e.Message.Audio.FileId, e.Message.Audio.FileName);
                     break;
                 case MessageType.Photo:
-                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send photo: {e.Message.Photo[e.Message.Photo.Length - 1].FileId} {e.Message.Photo[e.Message.Photo.Length - 1].FileSize}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send photo: {e.Message.Photo[e.Message.Photo.Length - 1].FileId} {e.Message.Photo[e.Message.Photo.Length - 1].FileSize}");
                     DocumentHandler(e.Message.Photo[e.Message.Photo.Length - 1].FileId, e.Message.Photo[e.Message.Photo.Length - 1].FileId);
                     break;
                 case MessageType.Video:
-                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send video: {e.Message.Video.FileName} {e.Message.Video.FileSize}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send video: {e.Message.Video.FileName} {e.Message.Video.FileSize}");
                     DocumentHandler(e.Message.Video.FileId, (string.IsNullOrEmpty(e.Message.Video.FileName) ? e.Message.Video.FileId : e.Message.Video.FileName));
                     break;
                 case MessageType.Voice:
-                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send video: {e.Message.Video.FileName} {e.Message.Video.FileSize}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send video: {e.Message.Video.FileName} {e.Message.Video.FileSize}");
                     DocumentHandler(e.Message.Voice.FileId, e.Message.Voice.FileId);
                     break;
                 default:
-                    Debug.WriteLine($"{DateTime.Now} \t\t {e.Message.From.FirstName} {e.Message.From.LastName} \t\t send {e.Message.Type}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send {e.Message.Type}");
                     await _client.SendTextMessageAsync(e.Message.Chat.Id, "Прости, я не понимаю такие сообщения.");
                     break;
             }
@@ -287,6 +296,18 @@ namespace Homework_10
             if (!Directory.Exists($"{RootPath}/{path}")) { Directory.CreateDirectory($"{RootPath}/{path}"); }
 
             return $"{RootPath}/{path}";
+        }
+
+        private void CheckUser(string Nick, string Name, long Id)
+        {
+            var user = new TelegramUser(Nick, Name, Id);
+            if (!UserList.Contains(user))
+            {
+                window.Dispatcher.Invoke(() =>
+                {
+                    UserList.Add(user);
+                });
+            }
         }
 
     }
