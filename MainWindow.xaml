@@ -28,11 +28,21 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderBrush="Black" Margin="5" BorderThickness="1" CornerRadius="10">
-                        <StackPanel Margin="10">
-                            <TextBlock Text="{Binding Path=Name}" Margin="0" FontSize="20" Foreground="Black" TextAlignment="Right"/>
-                            <TextBlock Text="{Binding Path=Nick}" Margin="0" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
-                            <TextBlock Text="{Binding Path=LastMessage}" Margin="10" FontSize="10" Foreground="Gray" TextAlignment="Left"/>
-                            <TextBlock Text="{Binding Path=MessageCount}" Margin="10" FontSize="10" Foreground="Gray" TextAlignment="Left"/>
+                        <StackPanel Margin="5">
+                            <StackPanel Orientation="Horizontal" Background="Aqua">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Background="Blue">
+                                    <TextBlock Text="{Binding Path=Name}" FontSize="20" Foreground="Black" TextAlignment="Left"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Background="Bisque">
+                                    <TextBlock Text="{Binding Path=MessageCount}" FontSize="20" Foreground="Gray" Padding="20,0,0,0"/>    
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Background="AliceBlue">
+                                <TextBlock Text="{Binding Path=LastMessage}" FontSize="10" Foreground="Gray" TextAlignment="Left"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Background="DarkKhaki">
+                                <TextBlock Text="{Binding Path=Nick}" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </DataTemplate>
@@ -59,9 +69,9 @@
                 <DataTemplate>
                     <Border BorderBrush="Black" Margin="5" BorderThickness="1" CornerRadius="10">
                         <StackPanel Margin="10">
-                            <TextBlock Text="{Binding Path=Name}" Margin="0" FontSize="15"/>
+                            <TextBlock Text="{Binding Path=Name}" Margin="0" FontSize="10"/>
                             <TextBlock Text="{Binding Path=Msg}" Margin="0" FontSize="20"/>
-                            <TextBlock Text="{Binding Path=Time}" Margin="10" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding Path=Time}" Margin="0" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
                         </StackPanel>
                     </Border>
                 </DataTemplate>
