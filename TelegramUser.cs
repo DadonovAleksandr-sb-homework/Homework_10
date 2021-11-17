@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,12 +28,12 @@ namespace Homework_10
         /// <summary>
         /// Все сообщения от пользователя
         /// </summary>
-        public List<string> Messages { get; set; }
+        public ObservableCollection<TelegramMessage> Messages { get; set; }
 
         /// <summary>
         /// Последнее сообщение в чате пользователя
         /// </summary>
-        public string LastMessage => Messages.LastOrDefault();
+        public string LastMessage => Messages.LastOrDefault()?.Text;
 
         /// <summary>
         /// Кол-во сообщений в чате
@@ -44,7 +45,7 @@ namespace Homework_10
             Nick = nick;
             Name = name;
             ChatId = chatId;
-            Messages = new List<string>();
+            Messages = new ObservableCollection<TelegramMessage>();
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace Homework_10
         /// Добавление сообщения
         /// </summary>
         /// <param name="text"></param>
-        public void AddMessage(string text) => Messages.Add(text);
+        public void AddMessage(TelegramMessage msg) => Messages.Add(msg);
 
     }
 

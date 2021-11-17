@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types;
@@ -15,7 +16,7 @@ namespace Homework_10
     public class MyTelegramBot
     {
         private MainWindow window;
-        public ObservableCollection<MessageLog> BotMessageLog { get; set; }
+        public ObservableCollection<TelegramMessage> BotMessageLog { get; set; }
         public ObservableCollection<TelegramUser> UserList { get; set; }
 
         private TelegramBotClient _client;
@@ -24,6 +25,8 @@ namespace Homework_10
         private enum BotCmd { ShowFiles }
         private const string RootPath = "BotData";
         private const int MaxFileName = 60;
+
+        private int curUserIndex = 0;
 
         public string Name { get { return _name; } }
 
@@ -35,7 +38,7 @@ namespace Homework_10
         /// <exception cref="Exception"></exception>
         public MyTelegramBot(MainWindow w, string token)
         {
-            BotMessageLog = new ObservableCollection<MessageLog>();
+            BotMessageLog = new ObservableCollection<TelegramMessage>();
             UserList = new ObservableCollection<TelegramUser>();
             window = w;
             if (string.IsNullOrEmpty(token))                        // если вместо токена передали пустую строку, 
@@ -84,41 +87,47 @@ namespace Homework_10
         {
             if (e.Message is null) return;
             var userName = $"{e.Message.From.FirstName} {e.Message.From.LastName}";
-            CheckUser(e.Message.From.Username, userName, e.Message.Chat.Id);
-
+            curUserIndex = CheckUser(e.Message.From.Username, userName, e.Message.Chat.Id);
             switch (e.Message.Type)
             {
                 case MessageType.Text:
                     Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send text:{e.Message.Text}");
+                    UserList[curUserIndex].Messages.Add(new TelegramMessage(e.Message.Text, userName, e.Message.Chat.Id));
                     TextHandler(e.Message);
                     break;
                 case MessageType.Document:
                     Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send doc: {e.Message.Document.FileName} {e.Message.Document.FileSize}");
+                    UserList[curUserIndex].Messages.Add(new TelegramMessage($"{userName} send doc: {e.Message.Document.FileName} {e.Message.Document.FileSize}", userName, e.Message.Chat.Id));
                     DocumentHandler(e.Message.Document.FileId, e.Message.Document.FileName);
                     break;
                 case MessageType.Audio:
                     Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send audio: {e.Message.Audio.FileName} {e.Message.Audio.FileSize}");
+                    UserList[curUserIndex].Messages.Add(new TelegramMessage($"{userName} send audio: {e.Message.Audio.FileName} {e.Message.Audio.FileSize}", userName, e.Message.Chat.Id));
                     DocumentHandler(e.Message.Audio.FileId, e.Message.Audio.FileName);
                     break;
                 case MessageType.Photo:
                     Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send photo: {e.Message.Photo[e.Message.Photo.Length - 1].FileId} {e.Message.Photo[e.Message.Photo.Length - 1].FileSize}");
+                    UserList[curUserIndex].Messages.Add(new TelegramMessage($"{userName} send photo: {e.Message.Photo[e.Message.Photo.Length - 1].FileId} {e.Message.Photo[e.Message.Photo.Length - 1].FileSize}", userName, e.Message.Chat.Id));
                     DocumentHandler(e.Message.Photo[e.Message.Photo.Length - 1].FileId, e.Message.Photo[e.Message.Photo.Length - 1].FileId);
                     break;
                 case MessageType.Video:
                     Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send video: {e.Message.Video.FileName} {e.Message.Video.FileSize}");
+                    UserList[curUserIndex].Messages.Add(new TelegramMessage($"{userName} send video: {e.Message.Video.FileName} {e.Message.Video.FileSize}", userName, e.Message.Chat.Id));
                     DocumentHandler(e.Message.Video.FileId, (string.IsNullOrEmpty(e.Message.Video.FileName) ? e.Message.Video.FileId : e.Message.Video.FileName));
                     break;
                 case MessageType.Voice:
-                    Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send video: {e.Message.Video.FileName} {e.Message.Video.FileSize}");
+                    Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send voice: {e.Message.Video.FileName} {e.Message.Video.FileSize}");
+                    UserList[curUserIndex].Messages.Add(new TelegramMessage($"{userName} send voice: {e.Message.Video.FileName} {e.Message.Video.FileSize}", userName, e.Message.Chat.Id));
                     DocumentHandler(e.Message.Voice.FileId, e.Message.Voice.FileId);
                     break;
                 default:
                     Debug.WriteLine($"{DateTime.Now} \t\t {userName} \t\t send {e.Message.Type}");
+                    UserList[curUserIndex].Messages.Add(new TelegramMessage($"{userName} send {e.Message.Type}", userName, e.Message.Chat.Id));
                     await _client.SendTextMessageAsync(e.Message.Chat.Id, "Прости, я не понимаю такие сообщения.");
+                    UserList[curUserIndex].Messages.Add(new TelegramMessage("Прости, я не понимаю такие сообщения.", userName, e.Message.Chat.Id));
                     break;
             }
 
-            
         }
 
         /// <summary>
@@ -141,8 +150,9 @@ namespace Homework_10
         {
             window.Dispatcher.Invoke(() =>
             {
-                BotMessageLog.Add(new MessageLog(
-                    msg.Text, msg.Chat.FirstName, msg.Chat.Id));
+                BotMessageLog.Add(new TelegramMessage(
+                    msg.Text, $"{msg.Chat.FirstName} {msg.Chat.LastName}", msg.Chat.Id));
+                //BotMessageLog = UserList[curUserIndex].Messages;
             });
 
             switch (msg.Text.ToLower())
@@ -298,7 +308,7 @@ namespace Homework_10
             return $"{RootPath}/{path}";
         }
 
-        private void CheckUser(string Nick, string Name, long Id)
+        private int CheckUser(string Nick, string Name, long Id)
         {
             var user = new TelegramUser(Nick, Name, Id);
             if (!UserList.Contains(user))
@@ -308,6 +318,7 @@ namespace Homework_10
                     UserList.Add(user);
                 });
             }
+            return UserList.IndexOf(user);
         }
 
     }

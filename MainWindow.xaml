@@ -23,31 +23,45 @@
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
                  Margin="5"
-                 Foreground="AntiqueWhite"
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderBrush="Black" Margin="5" BorderThickness="1" CornerRadius="10">
-                        <StackPanel Margin="5">
-                            <StackPanel Orientation="Horizontal" Background="Aqua">
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Background="Blue">
+                    <Border BorderBrush="Black" Margin="5" BorderThickness="1" CornerRadius="10" >
+                        <StackPanel Margin="5" >
+                            <StackPanel Orientation="Horizontal" >
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" >
                                     <TextBlock Text="{Binding Path=Name}" FontSize="20" Foreground="Black" TextAlignment="Left"/>
                                 </StackPanel>
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Background="Bisque">
-                                    <TextBlock Text="{Binding Path=MessageCount}" FontSize="20" Foreground="Gray" Padding="20,0,0,0"/>    
+                                <StackPanel HorizontalAlignment="Right" Margin="10,0,0,0" MinWidth="20">
+                                    <Grid>
+                                        <Rectangle Fill="Gray" 
+                                                   RadiusX="10" 
+                                                   RadiusY="10"></Rectangle>
+                                        <TextBlock Text="{Binding Path=MessageCount}" 
+                                                   FontSize="20" 
+                                                   Foreground="Black" 
+                                                   HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center" 
+                                                   />
+                                    </Grid>
                                 </StackPanel>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" Background="AliceBlue">
+                            <StackPanel Orientation="Horizontal" >
                                 <TextBlock Text="{Binding Path=LastMessage}" FontSize="10" Foreground="Gray" TextAlignment="Left"/>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" Background="DarkKhaki">
-                                <TextBlock Text="{Binding Path=Nick}" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Text="{Binding Path=Nick}" FontSize="10" Foreground="Gray" TextAlignment="Right" Visibility="Collapsed"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <StackPanel>
+            <Button>
+                
+            </Button>
+        </StackPanel>
 
         <GridSplitter Grid.Column="1"
                       Grid.RowSpan="2"
@@ -70,7 +84,7 @@
                     <Border BorderBrush="Black" Margin="5" BorderThickness="1" CornerRadius="10">
                         <StackPanel Margin="10">
                             <TextBlock Text="{Binding Path=Name}" Margin="0" FontSize="10"/>
-                            <TextBlock Text="{Binding Path=Msg}" Margin="0" FontSize="20"/>
+                            <TextBlock Text="{Binding Path=Text}" Margin="0" FontSize="20"/>
                             <TextBlock Text="{Binding Path=Time}" Margin="0" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
                         </StackPanel>
                     </Border>
