@@ -78,7 +78,8 @@
                 Grid.Row="0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                Margin="5">
+                Margin="5"
+                ItemsSource="{Binding ElementName=UserList, Path=SelectedItem.Messages}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderBrush="Black" Margin="5" BorderThickness="1" CornerRadius="10">

@@ -16,7 +16,8 @@ namespace Homework_10
     public class MyTelegramBot
     {
         private MainWindow window;
-        public ObservableCollection<TelegramMessage> BotMessageLog { get; set; }
+        // TODO: удалить, общий чат не нужен. Даешь чат для каждого пользователя!
+        //public ObservableCollection<TelegramMessage> BotMessageLog { get; set; }
         public ObservableCollection<TelegramUser> UserList { get; set; }
 
         private TelegramBotClient _client;
@@ -38,7 +39,8 @@ namespace Homework_10
         /// <exception cref="Exception"></exception>
         public MyTelegramBot(MainWindow w, string token)
         {
-            BotMessageLog = new ObservableCollection<TelegramMessage>();
+            // TODO: удалить, общий чат не нужен. Даешь чат для каждого пользователя!
+            //BotMessageLog = new ObservableCollection<TelegramMessage>();      
             UserList = new ObservableCollection<TelegramUser>();
             window = w;
             if (string.IsNullOrEmpty(token))                        // если вместо токена передали пустую строку, 
@@ -148,12 +150,13 @@ namespace Homework_10
         /// <param name="msg"></param>
         public async void TextHandler(Message msg)
         {
-            window.Dispatcher.Invoke(() =>
-            {
-                BotMessageLog.Add(new TelegramMessage(
-                    msg.Text, $"{msg.Chat.FirstName} {msg.Chat.LastName}", msg.Chat.Id));
-                //BotMessageLog = UserList[curUserIndex].Messages;
-            });
+            // TODO: удалить, общий чат не нужен. Даешь чат для каждого пользователя!
+            //window.Dispatcher.Invoke(() =>
+            //{
+            //    BotMessageLog.Add(new TelegramMessage(
+            //        msg.Text, $"{msg.Chat.FirstName} {msg.Chat.LastName}", msg.Chat.Id));
+            //    //BotMessageLog = UserList[curUserIndex].Messages;
+            //});
 
             switch (msg.Text.ToLower())
             {
