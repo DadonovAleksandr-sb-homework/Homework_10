@@ -50,7 +50,7 @@ namespace Homework_10
         private void btnMsgSendClick(object sender, RoutedEventArgs e)
         {
             if(bot != null)
-                bot.SendMessage(txtMsgSend.Text, TargetSend.Text);
+                bot.SendMessage(txtMsgSend.Text);
         }
     }
 }

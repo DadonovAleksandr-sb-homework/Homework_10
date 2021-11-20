@@ -6,6 +6,25 @@
         xmlns:local="clr-namespace:Homework_10"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" x:Key="ChatBackGround">
+            <GradientStop Offset="0" Color="Aquamarine"/>
+            <GradientStop Offset="0.5" Color="MediumSpringGreen"/>
+            <GradientStop Offset="1" Color="Aquamarine"/>
+        </LinearGradientBrush>
+        <Style TargetType="Border" x:Key="TelegramChat">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=IsBotMsg}" Value="True">
+                    <Setter Property="Background" Value="Aqua"></Setter>
+                    <Setter Property="HorizontalAlignment" Value="Right"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=IsBotMsg}" Value="False">
+                    <Setter Property="Background" Value="AliceBlue"></Setter>
+                    <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid ShowGridLines="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="70*"></RowDefinition>
@@ -16,28 +35,29 @@
             <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="70*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-    
+
         <ListBox x:Name="UserList"
                  Grid.Column="0"
                  Grid.RowSpan="2"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
+                 HorizontalContentAlignment="Stretch"
                  Margin="5"
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderBrush="Black" Margin="5" BorderThickness="1" CornerRadius="10" >
                         <StackPanel Margin="5" >
-                            <StackPanel Orientation="Horizontal" >
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" >
-                                    <TextBlock Text="{Binding Path=Name}" FontSize="20" Foreground="Black" TextAlignment="Left"/>
-                                </StackPanel>
-                                <StackPanel HorizontalAlignment="Right" Margin="10,0,0,0" MinWidth="20">
-                                    <Grid>
-                                        <Rectangle Fill="Gray" 
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="{Binding Path=Name}" FontSize="20" Foreground="Black" TextAlignment="Left" />
+                                <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                                    <Grid HorizontalAlignment="Right">
+                                        <Rectangle Fill="LightGray" 
                                                    RadiusX="10" 
-                                                   RadiusY="10"></Rectangle>
-                                        <TextBlock Text="{Binding Path=MessageCount}" 
+                                                   RadiusY="10"
+                                                   MinWidth="20"
+                                                   />
+                                        <TextBlock Text="{Binding Path=MessageCount, UpdateSourceTrigger=PropertyChanged}" 
                                                    FontSize="20" 
                                                    Foreground="Black" 
                                                    HorizontalAlignment="Center" 
@@ -45,12 +65,12 @@
                                                    />
                                     </Grid>
                                 </StackPanel>
+                            </DockPanel>
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Text="{Binding Path=LastMessage, UpdateSourceTrigger=PropertyChanged}" FontSize="10" Foreground="Gray" TextAlignment="Left"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" >
-                                <TextBlock Text="{Binding Path=LastMessage}" FontSize="10" Foreground="Gray" TextAlignment="Left"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" >
-                                <TextBlock Text="{Binding Path=Nick}" FontSize="10" Foreground="Gray" TextAlignment="Right" Visibility="Collapsed"/>
+                                <TextBlock Text="{Binding Path=Nick, UpdateSourceTrigger=PropertyChanged}" FontSize="10" Foreground="Gray" TextAlignment="Right" Visibility="Visible"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -74,19 +94,26 @@
         </GridSplitter>
 
         <ListBox x:Name="LogList"
-                Grid.Column="2"
-                Grid.Row="0"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Margin="5"
-                ItemsSource="{Binding ElementName=UserList, Path=SelectedItem.Messages}">
+                 Grid.Column="2"
+                 Grid.Row="0"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch"
+                 HorizontalContentAlignment="Stretch"
+                 Margin="5"
+                 Background="{StaticResource ChatBackGround}"
+                 ItemsSource="{Binding ElementName=UserList, Path=SelectedItem.Messages}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderBrush="Black" Margin="5" BorderThickness="1" CornerRadius="10">
-                        <StackPanel Margin="10">
+                    <Border Style="{StaticResource TelegramChat}" 
+                            BorderBrush="Black" 
+                            Margin="5" 
+                            BorderThickness="1" 
+                            CornerRadius="10" >
+                        <StackPanel Margin="10" HorizontalAlignment="Right" >
                             <TextBlock Text="{Binding Path=Name}" Margin="0" FontSize="10"/>
                             <TextBlock Text="{Binding Path=Text}" Margin="0" FontSize="20"/>
                             <TextBlock Text="{Binding Path=Time}" Margin="0" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
+                            <TextBlock Text="{Binding Path=IsBotMsg}" Margin="0" FontSize="10" Foreground="Gray" Visibility="Collapsed"/>
                         </StackPanel>
                     </Border>
                 </DataTemplate>
@@ -101,11 +128,6 @@
                   VerticalAlignment="Stretch"
                   Margin="5">
             <StackPanel>
-                <TextBlock x:Name="TargetSend"
-                           FontSize="8"
-                           Text="{Binding ElementName=LogList, Path=SelectedItem.Id}"
-                           Visibility="Visible"
-                           Margin="5,2"/>
                 <TextBox x:Name="txtMsgSend" 
                          FontSize="20" 
                          Margin="5,2"/>

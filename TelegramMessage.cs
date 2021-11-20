@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Media;
 
 namespace Homework_10
 {
@@ -12,12 +14,15 @@ namespace Homework_10
 
         public string Name { get; set; }
 
-        public TelegramMessage(string text, string userName, long id)
+        public bool IsBotMsg { get; set; }
+
+        public TelegramMessage(string text, string userName, long id, bool isBotMsg = false)
         {
             this.Time = DateTime.Now.ToLongTimeString();
             this.Text = text;
             this.Name = userName;       // TODO: убрать, не нужно хранить в каждом сообщении информаию, хранящуюся в User
             this.Id = id;               // TODO: убрать, не нужно хранить в каждом сообщении информаию, хранящуюся в User
+            this.IsBotMsg = isBotMsg;
         }
     }
 }
