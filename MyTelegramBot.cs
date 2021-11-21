@@ -127,7 +127,7 @@ namespace Homework_10
             Debug.WriteLine($"{DateTime.Now} \t {(IsBotAnswer ? _name : curUser.Name)} : {message}");
             window.Dispatcher.Invoke(() =>
             {
-                curUser.Messages.Add(new TelegramMessage(message, (IsBotAnswer ? _name : curUser.Name), curUser.ChatId, IsBotAnswer));
+                curUser.AddMessage(new TelegramMessage(message, (IsBotAnswer ? _name : curUser.Name), curUser.ChatId, IsBotAnswer));
                 window.UpdateLayout();
             });
 
