@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Homework_10
 {
-    public class TelegramUser
+    public class TelegramUser : INotifyPropertyChanged
     {
         /// <summary>
         /// Ник пользователя
@@ -28,7 +29,7 @@ namespace Homework_10
         /// <summary>
         /// Все сообщения от пользователя
         /// </summary>
-        public ObservableCollection<TelegramMessage> Messages { get; set; }
+        public ObservableCollection<TelegramMessage> Messages { get; }
 
         /// <summary>
         /// Последнее сообщение в чате пользователя
@@ -48,6 +49,7 @@ namespace Homework_10
             Messages = new ObservableCollection<TelegramMessage>();
         }
 
+        
         /// <summary>
         /// Сравнение двух пользователей
         /// </summary>
@@ -74,7 +76,21 @@ namespace Homework_10
         /// Добавление сообщения
         /// </summary>
         /// <param name="text"></param>
-        public void AddMessage(TelegramMessage msg) => Messages.Add(msg);
+        public void AddMessage(TelegramMessage msg)
+        {
+            Messages.Add(msg);
+            OnPropertyChanged(nameof(MessageCount));
+            OnPropertyChanged(nameof(LastMessage));
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
 
     }
 
