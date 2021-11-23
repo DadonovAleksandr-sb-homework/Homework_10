@@ -5,9 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Homework_10"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Telegram-bot console" Height="450" Width="800">
     <Window.Resources>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" x:Key="ChatBackGround">
+            <GradientStop Offset="0" Color="Aquamarine"/>
+            <GradientStop Offset="0.5" Color="MediumSpringGreen"/>
+            <GradientStop Offset="1" Color="Aquamarine"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" x:Key="UserListBackGround">
             <GradientStop Offset="0" Color="Aquamarine"/>
             <GradientStop Offset="0.5" Color="MediumSpringGreen"/>
             <GradientStop Offset="1" Color="Aquamarine"/>
@@ -25,10 +30,10 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Grid ShowGridLines="False">
+    <Grid ShowGridLines="False" Background="LightGray">
         <Grid.RowDefinitions>
-            <RowDefinition Height="70*"></RowDefinition>
-            <RowDefinition Height="30*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30*"></ColumnDefinition>
@@ -42,7 +47,8 @@
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
                  HorizontalContentAlignment="Stretch"
-                 Margin="5"
+                 Margin="5,5,0,5"
+                 Background="{StaticResource UserListBackGround}"
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -77,12 +83,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel>
-            <Button>
-                
-            </Button>
-        </StackPanel>
-
+        
         <GridSplitter Grid.Column="1"
                       Grid.RowSpan="2"
                       HorizontalAlignment="Stretch"
@@ -99,7 +100,7 @@
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
                  HorizontalContentAlignment="Stretch"
-                 Margin="5"
+                 Margin="0,5,5,0"
                  Background="{StaticResource ChatBackGround}"
                  ItemsSource="{Binding ElementName=UserList, Path=SelectedItem.Messages}">
             <ListBox.ItemTemplate>
@@ -126,7 +127,7 @@
                   Header="Отправка сообщения" 
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
-                  Margin="5">
+                  Margin="0,0,5,5">
             <StackPanel>
                 <TextBox x:Name="txtMsgSend" 
                          FontSize="20" 
