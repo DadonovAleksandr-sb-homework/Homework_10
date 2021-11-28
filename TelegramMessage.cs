@@ -20,8 +20,7 @@ namespace Homework_10
         {
             this.Time = DateTime.Now.ToLongTimeString();
             this.Text = text;
-            this.Name = userName;       // TODO: убрать, не нужно хранить в каждом сообщении информаию, хранящуюся в User
-            this.Id = id;               // TODO: убрать, не нужно хранить в каждом сообщении информаию, хранящуюся в User
+            this.Name = userName;      
             this.IsBotMsg = isBotMsg;
         }
     }
