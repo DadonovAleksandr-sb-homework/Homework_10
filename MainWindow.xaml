@@ -36,7 +36,8 @@
               Height="25"
               >
             <MenuItem Header="Файл" Width="100" Height="25" >
-                <MenuItem Header="Импорт в JSON" Tag="Import" Click="MenuItem_Click"/>
+                <MenuItem Header="Импорт в JSON файл" Tag="Import" Click="MenuItem_Click"/>
+                <MenuItem Header="Экспорт из JSON файл" Tag="Export" Click="MenuItem_Click"/>
                 <Separator/>
                 <MenuItem Header="Выход" Tag="Exit" Click="MenuItem_Click"/>
             </MenuItem>
@@ -149,7 +150,7 @@
                                 <TextBlock Text="{Binding Path=Name}" Margin="0" FontSize="10"/>
                                 <TextBlock Text="{Binding Path=Text}" Margin="0" FontSize="20"/>
                                 <TextBlock Text="{Binding Path=Time}" Margin="0" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
-                                <TextBlock Text="{Binding Path=IsBotMsg}" Margin="0" FontSize="10" Foreground="Gray" Visibility="Visible"/>
+                                <TextBlock Text="{Binding Path=IsBotMsg}" Margin="0" FontSize="10" Foreground="Gray" Visibility="Collapsed"/>
                             </StackPanel>
                         </Border>
                         <DataTemplate.Triggers>

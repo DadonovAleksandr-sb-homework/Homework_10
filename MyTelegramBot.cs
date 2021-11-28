@@ -17,18 +17,47 @@ namespace Homework_10
     public class MyTelegramBot
     {
         private MainWindow window;
+        /// <summary>
+        /// Список корреспондентов
+        /// </summary>
         public ObservableCollection<TelegramUser> UserList { get; set; }
-
+        /// <summary>
+        /// бот из библиотки
+        /// </summary>
         private TelegramBotClient _client;
+        /// <summary>
+        /// Имя бота
+        /// </summary>
         private string _name;
+        /// <summary>
+        /// Список файлов, сохраненных ботом
+        /// </summary>
         private List<BotFile> _files;
+        /// <summary>
+        /// Команды, которым обуче бот
+        /// </summary>
         private enum BotCmd { ShowFiles }
+        /// <summary>
+        /// Каталог для хранения фалов, отправленных боту
+        /// </summary>
         private const string RootPath = "BotData";
+        /// <summary>
+        /// Максимальная длина имени файла
+        /// </summary>
         private const int MaxFileName = 60;
-
+        /// <summary>
+        /// Текущий, выбранный корреспондент
+        /// </summary>
         private TelegramUser curUser;
-
+        /// <summary>
+        /// Имя бота
+        /// </summary>
         public string Name { get { return _name; } }
+
+        /// <summary>
+        /// Есть хотя бы один активный чат
+        /// </summary>
+        public bool IsActiveChat => curUser != null;
 
         /// <summary>
         /// Инициализация клиента
@@ -121,7 +150,12 @@ namespace Homework_10
             }
 
         }
-
+        
+        /// <summary>
+        /// Формирование лога сообщений 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="IsBotAnswer"></param>
         private async void MessageLog(string message, bool IsBotAnswer = false)
         {
             Debug.WriteLine($"{DateTime.Now} \t {(IsBotAnswer ? _name : curUser.Name)} : {message}");
@@ -133,9 +167,13 @@ namespace Homework_10
 
         }
 
+        /// <summary>
+        /// Обработка сообщений
+        /// </summary>
+        /// <param name="message"></param>
         private async void SendText(string message)
         {
-            Thread.Sleep(2000);
+            Thread.Sleep(500);
             MessageLog(message, true);
             
             await _client.SendTextMessageAsync(curUser.ChatId, message);
@@ -251,7 +289,11 @@ namespace Homework_10
             }
         }
 
-
+        /// <summary>
+        /// Скачивание файла
+        /// </summary>
+        /// <param name="fileId"></param>
+        /// <param name="path"></param>
         private async void DownloadFile(string fileId, string path)
         {
             try
@@ -268,6 +310,10 @@ namespace Homework_10
             }
         }
 
+        /// <summary>
+        /// Получить список файлов
+        /// </summary>
+        /// <returns></returns>
         private List<BotFile> GetFileList()
         {
             Random rnd = new Random();
@@ -279,6 +325,11 @@ namespace Homework_10
             return ls;
         }
 
+        /// <summary>
+        /// Список фалов с рекурсивным обходом каталогов
+        /// </summary>
+        /// <param name="startPath"></param>
+        /// <returns></returns>
         private List<string> GetRecursFiles(string startPath)
         {
             var ls = new List<string>();
@@ -304,6 +355,11 @@ namespace Homework_10
             return ls;
         }
 
+        /// <summary>
+        /// Проверка существования директории
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         private string CheckDirectory(string path)
         {
             if (!Directory.Exists(RootPath)) { Directory.CreateDirectory(RootPath); }
@@ -312,6 +368,13 @@ namespace Homework_10
             return $"{RootPath}/{path}";
         }
 
+        /// <summary>
+        /// Проверка: пользуватель есть в текущем списке корреспондентов
+        /// </summary>
+        /// <param name="Nick"></param>
+        /// <param name="Name"></param>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         private TelegramUser CheckUser(string Nick, string Name, long Id)
         {
             var user = new TelegramUser(Nick, Name, Id);
@@ -323,6 +386,15 @@ namespace Homework_10
                 });
             }
             return UserList[UserList.IndexOf(user)];
+        }
+
+        /// <summary>
+        /// Установка текущего корреспондента
+        /// </summary>
+        /// <param name="user"></param>
+        public void SetCurUser(TelegramUser user)
+        {
+            curUser = user;
         }
 
     }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -19,6 +21,9 @@ namespace Homework_10
             StartBot();
         }
 
+        /// <summary>
+        /// Запуск бота
+        /// </summary>
         private void StartBot()
         {
             try
@@ -45,13 +50,23 @@ namespace Homework_10
             Console.ReadLine();
         }
 
+        /// <summary>
+        /// Отправка сообщений
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnMsgSendClick(object sender, RoutedEventArgs e)
         {
-            if (bot != null && bot.UserList.Count > 0)
+            if (bot != null && bot.IsActiveChat)
                 bot.SendMessage(txtMsgSend.Text);
             txtMsgSend.Clear();
         }
 
+        /// <summary>
+        /// Выбор текущего корреспондента
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void UserList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if(sender is ListBox lb)
@@ -64,10 +79,16 @@ namespace Homework_10
                         user.IsActive = false;
                     }
                     selectionUser.IsActive = true;
+                    bot.SetCurUser(selectionUser);
                 }
             }
         }
 
+        /// <summary>
+        /// Команды меню
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             if(sender is MenuItem menuItem)
@@ -75,13 +96,59 @@ namespace Homework_10
                 switch(menuItem.Tag)
                 {
                     case "Import":
-                        MessageBox.Show("Import");
+                        ImportToJson();
+                        break;
+                    case "Export":
+                        ExportFromJson();
                         break;
                     case "Exit":
                         Environment.Exit(0);
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Импорт текущего списка корреспондентов и журналов сообщений (по каждому пользователю) в JSON файл
+        /// </summary>
+        private void ImportToJson()
+        {
+            string userData = JsonConvert.SerializeObject(bot.UserList);
+            try
+            {
+                File.WriteAllText("user_data.json", userData);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// Экспорт текущего списка корреспондентов и журналов сообщений (по каждому пользователю) из JSON файл
+        /// </summary>
+        private void ExportFromJson()
+        {
+            try
+            {
+                string userData = File.ReadAllText("user_data.json");
+                if(JsonConvert.DeserializeObject<ObservableCollection<TelegramUser>>(userData) is ObservableCollection<TelegramUser> userList)
+                {
+                    if (userList is null)
+                        return;
+                    bot.UserList.Clear();
+                    foreach(var user in userList)
+                    {
+                        bot.UserList.Add(user);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
     }
 }
