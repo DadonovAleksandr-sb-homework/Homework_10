@@ -30,143 +30,156 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Grid ShowGridLines="False" Background="LightGray">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30*"></ColumnDefinition>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition Width="70*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
+    <DockPanel>
+        <Menu x:Name="BotMenu" 
+              DockPanel.Dock="Top" 
+              Height="25"
+              >
+            <MenuItem Header="Файл" Width="100" Height="25" >
+                <MenuItem Header="Импорт в JSON" Tag="Import" Click="MenuItem_Click"/>
+                <Separator/>
+                <MenuItem Header="Выход" Tag="Exit" Click="MenuItem_Click"/>
+            </MenuItem>
+        </Menu>
+        <Grid ShowGridLines="False" Background="LightGray">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="30*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="70*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
-        <ListBox x:Name="UserList"
+            <ListBox x:Name="UserList"
                  Grid.Column="0"
                  Grid.RowSpan="2"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
                  HorizontalContentAlignment="Stretch"
-                 Margin="5,5,0,5"
+                 Margin="5,0,0,5"
                  Background="{StaticResource UserListBackGround}" 
                  SelectionChanged="UserList_SelectionChanged"
                  >
-            <ListBox.ItemTemplate >
-                <DataTemplate>
-                    <Border x:Name="border" 
+                <ListBox.ItemTemplate >
+                    <DataTemplate>
+                        <Border x:Name="border" 
                             BorderBrush="Black" 
                             Margin="5"
                             BorderThickness="1"
                             CornerRadius="10" 
                             >
-                        <StackPanel Margin="5" >
-                            <DockPanel>
-                                <TextBlock DockPanel.Dock="Left" Text="{Binding Path=Name}" FontSize="20" Foreground="Black" TextAlignment="Left" />
-                                <StackPanel DockPanel.Dock="Right" 
+                            <StackPanel Margin="5" >
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Left" Text="{Binding Path=Name}" FontSize="20" Foreground="Black" TextAlignment="Left" />
+                                    <StackPanel DockPanel.Dock="Right" 
                                             HorizontalAlignment="Right"
                                             Visibility="{Binding Path=IsUnreadMsg}"
                                             >
-                                    <Grid HorizontalAlignment="Right">
-                                        <Rectangle Fill="LightGray" 
+                                        <Grid HorizontalAlignment="Right">
+                                            <Rectangle Fill="LightGray" 
                                                    RadiusX="10" 
                                                    RadiusY="10"
                                                    MinWidth="20"
                                                    />
-                                        <TextBlock Text="{Binding Path=UnreadCount, UpdateSourceTrigger=PropertyChanged}" 
+                                            <TextBlock Text="{Binding Path=UnreadCount, UpdateSourceTrigger=PropertyChanged}" 
                                                    FontSize="20" 
                                                    Foreground="Black" 
                                                    HorizontalAlignment="Center" 
                                                    VerticalAlignment="Center" 
                                                    />
-                                    </Grid>
+                                        </Grid>
+                                    </StackPanel>
+                                </DockPanel>
+                                <StackPanel Orientation="Horizontal" >
+                                    <TextBlock Text="{Binding Path=LastMessage, UpdateSourceTrigger=PropertyChanged}" FontSize="10" Foreground="Gray" TextAlignment="Left"/>
                                 </StackPanel>
-                            </DockPanel>
-                            <StackPanel Orientation="Horizontal" >
-                                <TextBlock Text="{Binding Path=LastMessage, UpdateSourceTrigger=PropertyChanged}" FontSize="10" Foreground="Gray" TextAlignment="Left"/>
+                                <StackPanel Orientation="Horizontal" >
+                                    <TextBlock Text="{Binding Path=Nick, UpdateSourceTrigger=PropertyChanged}" FontSize="10" Foreground="Gray" TextAlignment="Right" Visibility="Visible"/>
+                                </StackPanel>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" >
-                                <TextBlock Text="{Binding Path=Nick, UpdateSourceTrigger=PropertyChanged}" FontSize="10" Foreground="Gray" TextAlignment="Right" Visibility="Visible"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                    <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}" Value="True">
-                            <Setter TargetName="border" Property="BorderThickness" Value="3"/>
-                            <Setter TargetName="border" Property="Background" Value="Aqua"/>
-                        </DataTrigger>
-                    </DataTemplate.Triggers>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        
-        <GridSplitter Grid.Column="1"
+                        </Border>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}" Value="True">
+                                <Setter TargetName="border" Property="BorderThickness" Value="3"/>
+                                <Setter TargetName="border" Property="Background" Value="Aqua"/>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <GridSplitter Grid.Column="1"
                       Grid.RowSpan="2"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       Background="Black"
                       Opacity="0"
                       Width="3">
-            
-        </GridSplitter>
 
-        <ListBox x:Name="LogList"
+            </GridSplitter>
+
+            <ListBox x:Name="LogList"
                  Grid.Column="2"
                  Grid.Row="0"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Stretch"
                  HorizontalContentAlignment="Stretch"
-                 Margin="0,5,5,0"
+                 Margin="0,0,5,0"
                  Background="{StaticResource ChatBackGround}"
                  ItemsSource="{Binding ElementName=UserList, Path=SelectedItem.Messages}">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Style.Triggers>
-                        <Trigger Property="ListBoxItem.IsSelected" Value="True" >
-                            <Setter Property="ListBoxItem.FontStyle" Value="Italic" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListBox.ItemContainerStyle>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border x:Name="border" Style="{StaticResource TelegramChat}" 
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Style.Triggers>
+                            <Trigger Property="ListBoxItem.IsSelected" Value="True" >
+                                <Setter Property="ListBoxItem.FontStyle" Value="Italic" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border x:Name="border" Style="{StaticResource TelegramChat}" 
                         BorderBrush="Black" 
                         Margin="5" 
                         BorderThickness="1" 
                         CornerRadius="10" >
-                        <StackPanel Margin="10" HorizontalAlignment="Right" >
-                            <TextBlock Text="{Binding Path=Name}" Margin="0" FontSize="10"/>
-                            <TextBlock Text="{Binding Path=Text}" Margin="0" FontSize="20"/>
-                            <TextBlock Text="{Binding Path=Time}" Margin="0" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
-                            <TextBlock Text="{Binding Path=IsBotMsg}" Margin="0" FontSize="10" Foreground="Gray" Visibility="Visible"/>
-                        </StackPanel>
-                    </Border>
-                    <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}" Value="True">
-                            <Setter TargetName="border" Property="BorderThickness" Value="3"/>
-                        </DataTrigger>
-                    </DataTemplate.Triggers>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                            <StackPanel Margin="10" HorizontalAlignment="Right" >
+                                <TextBlock Text="{Binding Path=Name}" Margin="0" FontSize="10"/>
+                                <TextBlock Text="{Binding Path=Text}" Margin="0" FontSize="20"/>
+                                <TextBlock Text="{Binding Path=Time}" Margin="0" FontSize="10" Foreground="Gray" TextAlignment="Right"/>
+                                <TextBlock Text="{Binding Path=IsBotMsg}" Margin="0" FontSize="10" Foreground="Gray" Visibility="Visible"/>
+                            </StackPanel>
+                        </Border>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}},Path=IsSelected}" Value="True">
+                                <Setter TargetName="border" Property="BorderThickness" Value="3"/>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
 
-        <GroupBox Grid.Column="2" 
+            <GroupBox Grid.Column="2" 
                   Grid.Row="1" 
                   FontSize="20" 
                   Header="Отправка сообщения" 
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
                   Margin="0,0,5,5">
-            <StackPanel>
-                <TextBox x:Name="txtMsgSend" 
+                <StackPanel>
+                    <TextBox x:Name="txtMsgSend" 
                          FontSize="20" 
                          Margin="5,2"/>
-                <Button x:Name="btnMsgSend" 
+                    <Button x:Name="btnMsgSend" 
                         FontSize="20" 
                         Content="Отправить" 
                         Margin="5,2"
                         Click="btnMsgSendClick"/>
-            </StackPanel>
-        </GroupBox>
-    </Grid>
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+    </DockPanel>
+    
 </Window>

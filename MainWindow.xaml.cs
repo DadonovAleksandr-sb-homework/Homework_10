@@ -67,5 +67,21 @@ namespace Homework_10
                 }
             }
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if(sender is MenuItem menuItem)
+            {
+                switch(menuItem.Tag)
+                {
+                    case "Import":
+                        MessageBox.Show("Import");
+                        break;
+                    case "Exit":
+                        Environment.Exit(0);
+                        break;
+                }
+            }
+        }
     }
 }
