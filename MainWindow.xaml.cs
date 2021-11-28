@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-
+using System.Windows.Controls;
 
 namespace Homework_10
 {
@@ -51,6 +51,22 @@ namespace Homework_10
         {
             if(bot != null)
                 bot.SendMessage(txtMsgSend.Text);
+        }
+
+        private void UserList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if(sender is ListBox lb)
+            {
+                if(lb.SelectedItem is TelegramUser selectionUser)
+                {
+                    selectionUser.UnreadCount = 0;
+                    foreach(var user in bot.UserList)
+                    {
+                        user.IsActive = false;
+                    }
+                    selectionUser.IsActive = true;
+                }
+            }
         }
     }
 }

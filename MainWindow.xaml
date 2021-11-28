@@ -48,7 +48,8 @@
                  VerticalAlignment="Stretch"
                  HorizontalContentAlignment="Stretch"
                  Margin="5,5,0,5"
-                 Background="{StaticResource UserListBackGround}"
+                 Background="{StaticResource UserListBackGround}" 
+                 SelectionChanged="UserList_SelectionChanged"
                  >
             <ListBox.ItemTemplate >
                 <DataTemplate>
@@ -61,14 +62,17 @@
                         <StackPanel Margin="5" >
                             <DockPanel>
                                 <TextBlock DockPanel.Dock="Left" Text="{Binding Path=Name}" FontSize="20" Foreground="Black" TextAlignment="Left" />
-                                <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                                <StackPanel DockPanel.Dock="Right" 
+                                            HorizontalAlignment="Right"
+                                            Visibility="{Binding Path=IsUnreadMsg}"
+                                            >
                                     <Grid HorizontalAlignment="Right">
                                         <Rectangle Fill="LightGray" 
                                                    RadiusX="10" 
                                                    RadiusY="10"
                                                    MinWidth="20"
                                                    />
-                                        <TextBlock Text="{Binding Path=MessageCount, UpdateSourceTrigger=PropertyChanged}" 
+                                        <TextBlock Text="{Binding Path=UnreadCount, UpdateSourceTrigger=PropertyChanged}" 
                                                    FontSize="20" 
                                                    Foreground="Black" 
                                                    HorizontalAlignment="Center" 

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Homework_10
 {
@@ -40,6 +41,39 @@ namespace Homework_10
         /// Кол-во сообщений в чате
         /// </summary>
         public int MessageCount => Messages.Count;
+
+        private int _unreadCount;
+        /// <summary>
+        /// Кол-во непрочитанных сообщений
+        /// </summary>
+        public int UnreadCount
+        {
+            get
+            {
+                return _unreadCount;
+            }
+            set
+            {
+                _unreadCount = value;
+                if (_unreadCount > 0)
+                    IsUnreadMsg = Visibility.Visible;
+                else
+                    IsUnreadMsg = Visibility.Hidden;
+
+                OnPropertyChanged(nameof(UnreadCount));
+                OnPropertyChanged(nameof(IsUnreadMsg));
+            }
+        }
+
+        /// <summary>
+        /// Признак активности - сейчас открыт чат этого пользователя
+        /// </summary>
+        public bool IsActive { get; set; }
+
+        /// <summary>
+        /// Есть непрочитанные сообщения
+        /// </summary>
+        public Visibility IsUnreadMsg { get; set; }
 
         public TelegramUser(string nick, string name, long chatId)
         {
@@ -79,7 +113,9 @@ namespace Homework_10
         public void AddMessage(TelegramMessage msg)
         {
             Messages.Add(msg);
-            OnPropertyChanged(nameof(MessageCount));
+            if(!IsActive)
+                UnreadCount++;
+            
             OnPropertyChanged(nameof(LastMessage));
         }
 
