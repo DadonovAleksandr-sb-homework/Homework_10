@@ -29,8 +29,6 @@ namespace Homework_10
                     bot = new MyTelegramBot(this, File.ReadAllText(tokenFilePath));         // своя обертка для телеграм-клиента
                     if (bot.Start())
                         Debug.WriteLine($"Запуск бота {bot.Name}");
-                    // TODO: удалить, общий чат не нужен. Даешь чат для каждого пользователя!
-                    //LogList.ItemsSource = bot.BotMessageLog;
                     UserList.ItemsSource = bot.UserList;
                 }
                 else
@@ -49,8 +47,9 @@ namespace Homework_10
 
         private void btnMsgSendClick(object sender, RoutedEventArgs e)
         {
-            if(bot != null)
+            if (bot != null && bot.UserList.Count > 0)
                 bot.SendMessage(txtMsgSend.Text);
+            txtMsgSend.Clear();
         }
 
         private void UserList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
